@@ -39,10 +39,9 @@ target_include_directories(range-family-lib
 )
 
 target_link_libraries(range-family-lib
-    PRIVATE
-        Qt6::Core
-        common_defines
+    PUBLIC
         range-base-lib
+        common_defines
 
 )
 
