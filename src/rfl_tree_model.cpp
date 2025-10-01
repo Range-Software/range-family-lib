@@ -38,6 +38,9 @@ void FTreeModel::build(const FTree *familyTree, const QUuid &itemId)
     {
         delete item;
     }
+    this->model.clear();
+    this->vRanks.clear();
+    this->minVRank = this->maxVRank = this->minHRank = this->maxHRank = 0;
     this->familyTree = familyTree;
     try
     {
