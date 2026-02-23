@@ -76,8 +76,9 @@ void FTreeModelItem::setSearchDirection(FDirectionMask searchDirection)
 
 void FTreeModelItem::addPartner(FTreeModelItem *partner)
 {
-    this->partners.append(partner);
-    FTreeModelItem::sortList(this->partners);
+    auto pos = std::lower_bound(this->partners.begin(), this->partners.end(), partner,
+        [](const FTreeModelItem *a, const FTreeModelItem *b) { return a->age > b->age; });
+    this->partners.insert(pos, partner);
 }
 
 const QList<FTreeModelItem*> &FTreeModelItem::getPartners() const
@@ -92,8 +93,9 @@ QList<FTreeModelItem*> &FTreeModelItem::getPartners()
 
 void FTreeModelItem::addChild(FTreeModelItem *child)
 {
-    this->children.append(child);
-    FTreeModelItem::sortList(this->children);
+    auto pos = std::lower_bound(this->children.begin(), this->children.end(), child,
+        [](const FTreeModelItem *a, const FTreeModelItem *b) { return a->age > b->age; });
+    this->children.insert(pos, child);
 }
 
 const QList<FTreeModelItem*> &FTreeModelItem::getChildren() const

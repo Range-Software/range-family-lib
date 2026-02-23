@@ -1,3 +1,5 @@
+#include <QList>
+#include <QSet>
 #include <QStack>
 
 #include "rfl_tree_model.h"
@@ -160,11 +162,10 @@ void FTreeModel::convertTreeToModel()
 
     foreach (const QUuid &relationId, relationIds)
     {
-        uint age = this->familyTree->findRelation(relationId).getBegin().getDate().calculateAge();
+        const FRelation relation = this->familyTree->findRelation(relationId);
+        uint age = relation.getBegin().getDate().calculateAge();
         FTreeModelItem *relationItem = new FTreeModelItem(relationId,FTreeModelItem::Type::Relation,age);
         this->model.insert(relationId,relationItem);
-
-        FRelation relation = this->familyTree->findRelation(relationId);
 
         foreach (const QUuid &partnerId, relation.getPartners())
         {
@@ -207,6 +208,13 @@ void FTreeModel::calculateVisibility(const QUuid &itemId)
             item->setVisible(false);
             item->setSearchDirection(FConstants::Direction::None);
         }
+    }
+
+    if (stack.isEmpty())
+    {
+        RLogger::warning("Tree model: item not found in model (ID: '%s').\n",
+                         itemId.toString(QUuid::WithoutBraces).toUtf8().constData());
+        return;
     }
 
     // Traverse through the tree and set correct search directions
@@ -286,92 +294,91 @@ void FTreeModel::calculateHWidths(const QUuid &itemId)
         return;
     }
 
+    // Phase 1: collect visible items in post-order (dependencies before dependants).
+    // A nullptr sentinel on the stack means "the item below is ready to collect".
+    QList<FTreeModelItem*> postOrder;
+    QSet<FTreeModelItem*> scheduled;
+    scheduled.insert(item);
     stack.push(item);
 
-    // Traverse through the tree and set correct withs
     while (!stack.isEmpty())
     {
-        FTreeModelItem *stackItem = stack.top();
+        FTreeModelItem *cur = stack.pop();
 
-        bool popItem = true;
+        if (cur == nullptr)
+        {
+            // Sentinel: item immediately below on the stack is fully resolved.
+            postOrder.append(stack.pop());
+            continue;
+        }
 
+        // Re-push cur with a sentinel so it is collected after its dependencies.
+        stack.push(cur);
+        stack.push(nullptr);
+
+        // Push each unscheduled visible dependency so it is resolved first.
+        auto scheduleDeps = [&](const QList<FTreeModelItem*> &deps)
+        {
+            for (FTreeModelItem *dep : deps)
+            {
+                if (dep->getVisible() && !scheduled.contains(dep))
+                {
+                    scheduled.insert(dep);
+                    stack.push(dep);
+                }
+            }
+        };
+
+        if (cur->getType() == FTreeModelItem::Person)
+        {
+            if (cur->getSearchDirection() & FConstants::Direction::Up)
+                scheduleDeps(cur->getChildren());
+            if (cur->getSearchDirection() & FConstants::Direction::Down)
+                scheduleDeps(cur->getPartners());
+        }
+        else if (cur->getType() == FTreeModelItem::Relation)
+        {
+            if (cur->getSearchDirection() & FConstants::Direction::Up)
+                scheduleDeps(cur->getPartners());
+            if (cur->getSearchDirection() & FConstants::Direction::Down)
+                scheduleDeps(cur->getChildren());
+        }
+    }
+
+    // Phase 2: compute widths bottom-up; every dependency is already computed.
+    for (FTreeModelItem *cur : postOrder)
+    {
         uint upHWidth = 0;
         uint downHWidth = 0;
 
-        stackItem->setHWidth(0);
-
-        if (stackItem->getType() == FTreeModelItem::Person)
+        if (cur->getType() == FTreeModelItem::Person)
         {
-            if (stackItem->getSearchDirection() & FConstants::Direction::Up)
+            if (cur->getSearchDirection() & FConstants::Direction::Up)
             {
-                foreach (FTreeModelItem *childItem, stackItem->getChildren())
-                {
-                    if (childItem->getHWidth() == FConstants::eod)
-                    {
-                        stack.push(childItem);
-                        popItem = false;
-                    }
-                    else
-                    {
-                        upHWidth += childItem->getHWidth();
-                    }
-                }
+                for (FTreeModelItem *child : cur->getChildren())
+                    if (child->getVisible()) upHWidth += child->getHWidth();
             }
-            if (stackItem->getSearchDirection() & FConstants::Direction::Down)
+            if (cur->getSearchDirection() & FConstants::Direction::Down)
             {
-                foreach (FTreeModelItem *partnerItem, stackItem->getPartners())
-                {
-                    if (partnerItem->getHWidth() == FConstants::eod)
-                    {
-                        stack.push(partnerItem);
-                        popItem = false;
-                    }
-                    else
-                    {
-                        downHWidth += partnerItem->getHWidth();
-                    }
-                }
+                for (FTreeModelItem *partner : cur->getPartners())
+                    if (partner->getVisible()) downHWidth += partner->getHWidth();
             }
         }
-        else if (stackItem->getType() == FTreeModelItem::Relation)
+        else if (cur->getType() == FTreeModelItem::Relation)
         {
-            if (stackItem->getSearchDirection() & FConstants::Direction::Up)
+            if (cur->getSearchDirection() & FConstants::Direction::Up)
             {
-                foreach (FTreeModelItem *partnerItem, stackItem->getPartners())
-                {
-                    if (partnerItem->getHWidth() == FConstants::eod)
-                    {
-                        stack.push(partnerItem);
-                        popItem = false;
-                    }
-                    else
-                    {
-                        upHWidth += partnerItem->getHWidth();
-                    }
-                }
+                for (FTreeModelItem *partner : cur->getPartners())
+                    if (partner->getVisible()) upHWidth += partner->getHWidth();
             }
-            if (stackItem->getSearchDirection() & FConstants::Direction::Down)
+            if (cur->getSearchDirection() & FConstants::Direction::Down)
             {
-                foreach (FTreeModelItem *childItem, stackItem->getChildren())
-                {
-                    if (childItem->getHWidth() == FConstants::eod)
-                    {
-                        stack.push(childItem);
-                        popItem = false;
-                    }
-                    else
-                    {
-                        downHWidth += childItem->getHWidth();
-                    }
-                }
+                for (FTreeModelItem *child : cur->getChildren())
+                    if (child->getVisible()) downHWidth += child->getHWidth();
             }
         }
 
-        if (popItem)
-        {
-            stackItem->setHWidth(std::max(std::max(upHWidth,downHWidth),1u));
-            stack.pop();
-        }
+        cur->setHWidth(std::max(std::max(upHWidth, downHWidth), 1u));
     }
 }
 
@@ -387,7 +394,7 @@ void FTreeModel::calculateVRanks(const QUuid &itemId)
 
     FTreeModelItem *item = this->model[itemId];
 
-    if (!item->getVisible() || item->getHRank() != FConstants::eod)
+    if (!item->getVisible() || item->getVRank() != FConstants::eod)
     {
         return;
     }
@@ -425,15 +432,17 @@ void FTreeModel::calculateVRanks(const QUuid &itemId)
         }
     }
 
-    // Calculate minimum and maximum ranks.
+    // Calculate minimum and maximum ranks, pruning unranked items.
     bool isFirst = true;
-    foreach (FTreeModelItem *item, this->model)
+    for (auto it = this->model.begin(); it != this->model.end(); )
     {
+        FTreeModelItem *item = it.value();
         uint vRank = item->getVRank();
 
         if (vRank == FConstants::eod)
         {
-            this->model.remove(item->getId());
+            delete item;
+            it = this->model.erase(it);
         }
         else
         {
@@ -448,6 +457,7 @@ void FTreeModel::calculateVRanks(const QUuid &itemId)
                 this->minVRank = std::min(this->minVRank,vRank);
                 this->maxVRank = std::max(this->maxVRank,vRank);
             }
+            ++it;
         }
     }
 }
@@ -469,10 +479,7 @@ void FTreeModel::calculateHRanks(const QUuid &itemId)
         return;
     }
 
-    if (item->getHRank() == FConstants::eod)
-    {
-        item->setHRank(FConstants::eod / 2);
-    }
+    item->setHRank(FConstants::eod / 2);
 
     stack.push(item);
 
@@ -488,13 +495,13 @@ void FTreeModel::calculateHRanks(const QUuid &itemId)
             childrenWidth += childItem->getHWidth();
         }
 
-        uint childLowHRank = stackItem->getHRank() - childrenWidth / 2;
+        int childLowHRank = static_cast<int>(stackItem->getHRank()) - static_cast<int>(childrenWidth) / 2;
         foreach (FTreeModelItem *childItem, stackItem->getChildren())
         {
             if (childItem->getHRank() == FConstants::eod && childItem->getVisible())
             {
-                childItem->setHRank(childLowHRank + childItem->getHWidth()/2);
-                childLowHRank += childItem->getHWidth();
+                childItem->setHRank(static_cast<uint>(childLowHRank + static_cast<int>(childItem->getHWidth()) / 2));
+                childLowHRank += static_cast<int>(childItem->getHWidth());
                 stack.push(childItem);
             }
         }
@@ -506,27 +513,29 @@ void FTreeModel::calculateHRanks(const QUuid &itemId)
             partnersWidth += partnerItem->getHWidth();
         }
 
-        uint partnerLowHRank = stackItem->getHRank() - partnersWidth / 2;
+        int partnerLowHRank = static_cast<int>(stackItem->getHRank()) - static_cast<int>(partnersWidth) / 2;
         foreach (FTreeModelItem *partnerItem, stackItem->getPartners())
         {
             if (partnerItem->getHRank() == FConstants::eod && partnerItem->getVisible())
             {
-                partnerItem->setHRank(partnerLowHRank + partnerItem->getHWidth()/2);
-                partnerLowHRank += partnerItem->getHWidth();
+                partnerItem->setHRank(static_cast<uint>(partnerLowHRank + static_cast<int>(partnerItem->getHWidth()) / 2));
+                partnerLowHRank += static_cast<int>(partnerItem->getHWidth());
                 stack.push(partnerItem);
             }
         }
     }
 
-    // Calculate minimum and maximum ranks.
+    // Calculate minimum and maximum ranks, pruning unranked items.
     bool isFirst = true;
-    foreach (FTreeModelItem *item, this->model)
+    for (auto it = this->model.begin(); it != this->model.end(); )
     {
+        FTreeModelItem *item = it.value();
         uint hRank = item->getHRank();
 
         if (hRank == FConstants::eod)
         {
-            this->model.remove(item->getId());
+            delete item;
+            it = this->model.erase(it);
         }
         else
         {
@@ -541,6 +550,7 @@ void FTreeModel::calculateHRanks(const QUuid &itemId)
                 this->minHRank = std::min(this->minHRank,hRank);
                 this->maxHRank = std::max(this->maxHRank,hRank);
             }
+            ++it;
         }
     }
 }
