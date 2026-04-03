@@ -1373,6 +1373,111 @@ FTreeDiff FTree::diffFiles(const QString &aFileName, const QString &bFileName)
     return FTree::diffTrees(&a,&b);
 }
 
+QByteArray FTree::getJsonFileSpecs()
+{
+    QByteArray jsonFileSpecs = R"(FAMILY TREE JSON FILE SPECIFICATION
+
+TOP-LEVEL STRUCTURE
+The JSON file has three top-level keys:
+- "persons": array of Person objects
+- "relations": array of Relation objects
+- "version": string (e.g. "0.0.1")
+
+PERSON OBJECT
+Required fields:
+- "id": string, UUID v4, unique identifier
+- "name": Name object (see below)
+- "sex": string, "male" or "female"
+
+Optional fields:
+- "birth": Event object describing birth
+- "death": Event object describing death
+- "picture": Picture object with base64-encoded PNG photo
+- "text": string, base64-encoded notes or biography
+
+NAME OBJECT
+Required:
+- "first-name": string
+- "last-name": string
+Optional:
+- "middle-name": string
+- "maiden-name": string, birth surname before marriage
+
+EVENT OBJECT (used for birth, death, relation begin/end)
+Optional fields:
+- "date": Date object
+- "place": Place object
+
+DATE OBJECT
+All fields required when date is present:
+- "year": integer
+- "month": integer (1-12)
+- "day": integer (1-31)
+- "fuzzy": boolean, true if date is approximate or uncertain
+
+PLACE OBJECT
+Optional:
+- "address": Address object
+
+ADDRESS OBJECT
+All fields optional:
+- "city": string
+- "country": string
+- "street-number": string
+
+PICTURE OBJECT
+Required:
+- "base64Data": string, base64-encoded PNG image
+
+RELATION OBJECT
+A relation represents a partnership (marriage or similar) and its children.
+Required:
+- "id": string, UUID v4, unique identifier
+Optional:
+- "partners": array of person UUIDs, typically 2 (supports 0, 1, or 2 for incomplete records)
+- "children": array of person UUIDs
+- "begin": Event object (e.g. marriage date/place)
+- "end": Event object (e.g. divorce date/place)
+
+RULES AND CONSTRAINTS
+- All IDs use UUID v4 format.
+- All UUIDs in "partners" and "children" must reference valid person IDs in the "persons" array.
+- File encoding is UTF-8.
+- "text" and "picture.base64Data" fields are base64-encoded.
+- Omitted optional fields mean the information is unknown, not that it doesn't exist.
+
+MINIMAL VALID EXAMPLE
+{
+  "version": "0.0.1",
+  "persons": [
+    {
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": { "first-name": "John", "last-name": "Smith" },
+      "sex": "male",
+      "birth": {
+        "date": { "day": 15, "month": 6, "year": 1980, "fuzzy": false },
+        "place": { "address": { "city": "Prague", "country": "Czech Republic" } }
+      }
+    },
+    {
+      "id": "e5f6g7h8-i9j0-1234-klmn-op5678901234",
+      "name": { "first-name": "Jane", "last-name": "Smith", "maiden-name": "Doe" },
+      "sex": "female"
+    }
+  ],
+  "relations": [
+    {
+      "id": "r1s2t3u4-v5w6-7890-xyza-bc1234567890",
+      "partners": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890", "e5f6g7h8-i9j0-1234-klmn-op5678901234"],
+      "children": [],
+      "begin": { "date": { "day": 20, "month": 8, "year": 2010, "fuzzy": false } }
+    }
+  ]
+}
+)";
+    return jsonFileSpecs;
+}
+
 QUuid FTree::generateId()
 {
     return QUuid::createUuid();

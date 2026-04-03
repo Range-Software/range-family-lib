@@ -172,6 +172,9 @@ class FTree : public QObject
         //! Compare XML files (produce XML diff).
         static FTreeDiff diffFiles(const QString &aFileName, const QString &bFileName);
 
+        //! Return json file specs.
+        static QByteArray getJsonFileSpecs();
+
     public:
 
         //! Generate ID.
