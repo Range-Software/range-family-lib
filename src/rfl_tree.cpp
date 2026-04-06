@@ -1434,8 +1434,8 @@ A relation represents a partnership (marriage or similar) and its children.
 Required:
 - "id": string, UUID v4, unique identifier
 Optional:
-- "partners": array of person UUIDs, typically 2 (supports 0, 1, or 2 for incomplete records)
-- "children": array of person UUIDs
+- "partners": array of person UUIDs, typically 2 (supports 0, 1, or 2 for incomplete records), partners are also parents to children
+- "children": array of person UUIDs, children or siblings
 - "begin": Event object (e.g. marriage date/place)
 - "end": Event object (e.g. divorce date/place)
 
