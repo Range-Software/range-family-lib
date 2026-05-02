@@ -156,7 +156,7 @@ void FRelation::validate() const
         {
             if (this->children[i] == this->children[j])
             {
-                throw RError(RError::Type::InvalidInput,R_ERROR_REF,"iChildren list is not valid (duplicate child: \'%s\').",this->partners[i].toString(QUuid::WithoutBraces).toUtf8().constData());
+                throw RError(RError::Type::InvalidInput,R_ERROR_REF,"iChildren list is not valid (duplicate child: \'%s\').",this->children[i].toString(QUuid::WithoutBraces).toUtf8().constData());
             }
         }
     }

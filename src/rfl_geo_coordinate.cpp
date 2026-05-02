@@ -141,7 +141,7 @@ void FGeoCoordinate::setAltitude(double altitude)
 
 void FGeoCoordinate::merge(const FGeoCoordinate &geoCoordinates)
 {
-    if (this->isValid())
+    if (this->isEmpty())
     {
         (*this) = geoCoordinates;
     }

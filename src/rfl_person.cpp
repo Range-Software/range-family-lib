@@ -93,6 +93,14 @@ void FPerson::update(const FPerson &person)
     this->name.update(person.name);
     this->birth.update(person.birth);
     this->death.update(person.death);
+    if (!person.text.isEmpty())
+    {
+        this->text = person.text;
+    }
+    if (!person.picture.isEmpty())
+    {
+        this->picture = person.picture;
+    }
 }
 
 bool FPerson::isEmpty() const

@@ -120,7 +120,7 @@ void FTree::updatePerson(const FPerson &person)
         throw RError(RError::Type::InvalidInput,R_ERROR_REF,"Non-existing key (person ID: \"%s\").",person.getId().toString(QUuid::WithoutBraces).toUtf8().constData());
     }
     FPerson storedPerson = this->findPerson(person.getId());
-    storedPerson.update(storedPerson);
+    storedPerson.update(person);
     this->persons.insert(storedPerson.getId(),storedPerson);
 
     emit this->personChanged(this->persons[person.getId()]);
@@ -803,7 +803,7 @@ void FTree::importMissing(const FTree *pTree, uint &nImportedPersons, uint &nImp
         }
     }
 
-    for (auto iter = this->relations.cbegin(); iter != this->relations.cend(); ++iter)
+    for (auto iter = pTree->relations.cbegin(); iter != pTree->relations.cend(); ++iter)
     {
         if (!this->containsRelation(iter.value().getId()))
         {
