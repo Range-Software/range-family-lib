@@ -1,0 +1,14 @@
+---------------------------------------------------------------------------------
+Version 1.0.0
+
+Bug fixes:
+- FTree::updatePerson() was calling storedPerson.update(storedPerson) instead of
+  storedPerson.update(person), making the method a no-op.
+- FTree::importMissing() was iterating this->relations instead of pTree->relations,
+  so relations were never imported from the source tree.
+- FPerson::update() was not updating the text and picture fields.
+- FRelation::validate() was reporting a partner UUID in the duplicate-child error
+  message instead of the child UUID, which could also cause an out-of-bounds access
+  when the relation has more children than partners.
+- FGeoCoordinate::merge() condition was inverted: it replaced the existing coordinate
+  whenever it was valid (almost always) instead of only when it was empty.
