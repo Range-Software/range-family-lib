@@ -271,11 +271,11 @@
         <location filename="../src/rfl_event.cpp" line="121"/>
         <location filename="../src/rfl_geo_coordinate.cpp" line="170"/>
         <location filename="../src/rfl_name.cpp" line="208"/>
-        <location filename="../src/rfl_person.cpp" line="281"/>
+        <location filename="../src/rfl_person.cpp" line="289"/>
         <location filename="../src/rfl_picture.cpp" line="101"/>
         <location filename="../src/rfl_place.cpp" line="121"/>
         <location filename="../src/rfl_relation.cpp" line="334"/>
-        <location filename="../src/rfl_tree.cpp" line="1021"/>
+        <location filename="../src/rfl_tree.cpp" line="1042"/>
         <source>Missing element</source>
         <translation>Chýbajúci element</translation>
     </message>
@@ -285,15 +285,15 @@
         <location filename="../src/rfl_event.cpp" line="135"/>
         <location filename="../src/rfl_geo_coordinate.cpp" line="188"/>
         <location filename="../src/rfl_name.cpp" line="230"/>
-        <location filename="../src/rfl_person.cpp" line="319"/>
+        <location filename="../src/rfl_person.cpp" line="327"/>
         <location filename="../src/rfl_picture.cpp" line="119"/>
         <location filename="../src/rfl_place.cpp" line="135"/>
         <location filename="../src/rfl_relation.cpp" line="356"/>
         <location filename="../src/rfl_relation.cpp" line="370"/>
         <location filename="../src/rfl_relation.cpp" line="384"/>
-        <location filename="../src/rfl_tree.cpp" line="1047"/>
-        <location filename="../src/rfl_tree.cpp" line="1063"/>
-        <location filename="../src/rfl_tree.cpp" line="1069"/>
+        <location filename="../src/rfl_tree.cpp" line="1068"/>
+        <location filename="../src/rfl_tree.cpp" line="1084"/>
+        <location filename="../src/rfl_tree.cpp" line="1090"/>
         <source>Unexpected element</source>
         <translation>Neočakávaný element</translation>
     </message>
@@ -303,14 +303,14 @@
         <translation>približne</translation>
     </message>
     <message>
-        <location filename="../src/rfl_person.cpp" line="285"/>
+        <location filename="../src/rfl_person.cpp" line="293"/>
         <location filename="../src/rfl_relation.cpp" line="338"/>
-        <location filename="../src/rfl_tree.cpp" line="1026"/>
+        <location filename="../src/rfl_tree.cpp" line="1047"/>
         <source>Missing attribute</source>
         <translation>Chýbajúci atribút</translation>
     </message>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="1031"/>
+        <location filename="../src/rfl_tree.cpp" line="1052"/>
         <source>File version is not supported</source>
         <translation>Nepodporovaná verzia súboru</translation>
     </message>
