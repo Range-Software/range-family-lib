@@ -1,6 +1,8 @@
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QSaveFile>
+#include <QUrl>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <QTextStream>
@@ -860,6 +862,176 @@ void FTree::printRelationsList(const QString &sortPath) const
     }
 }
 
+//! Return path of given file relative to baseDir.
+//! Return empty string if the file is not located at or below baseDir.
+static QString relativeToBaseDir(const QString &filePath, const QString &baseDir)
+{
+    if (filePath.isEmpty() || baseDir.isEmpty())
+    {
+        return QString();
+    }
+
+    QString relativePath = QDir(baseDir).relativeFilePath(filePath);
+
+    if (relativePath.isEmpty() ||
+        QDir::isAbsolutePath(relativePath) ||
+        relativePath == ".." ||
+        relativePath.startsWith("../"))
+    {
+        return QString();
+    }
+
+    return relativePath;
+}
+
+QString FTree::resolvePictureUrl(const QString &url, const QString &baseDir)
+{
+    if (url.isEmpty() || baseDir.isEmpty())
+    {
+        return QString();
+    }
+
+    QUrl pictureUrl(QUrl::fromUserInput(url,baseDir,QUrl::AssumeLocalFile));
+
+    if (!pictureUrl.isValid() || !pictureUrl.isLocalFile())
+    {
+        RLogger::warning("Picture url \"%s\" does not point to a local file.\n",url.toUtf8().constData());
+        return QString();
+    }
+
+    QString filePath = QDir::cleanPath(pictureUrl.toLocalFile());
+
+    if (relativeToBaseDir(filePath,baseDir).isEmpty())
+    {
+        RLogger::warning("Picture url \"%s\" points outside of the tree file directory \"%s\".\n",
+                         url.toUtf8().constData(),
+                         baseDir.toUtf8().constData());
+        return QString();
+    }
+
+    return filePath;
+}
+
+void FTree::loadPictureUrls(const QString &treeFileName)
+{
+    this->pictureBaseDir = QFileInfo(treeFileName).absolutePath();
+
+    for (auto it = this->persons.begin(); it != this->persons.end(); ++it)
+    {
+        FPicture picture = it.value().getPicture();
+
+        if (picture.getUrl().isEmpty())
+        {
+            continue;
+        }
+
+        QString filePath = FTree::resolvePictureUrl(picture.getUrl(),this->pictureBaseDir);
+
+        if (filePath.isEmpty())
+        {
+            // Url can not be honored - keep the embedded data only.
+            picture.setUrl(QString());
+            it.value().setPicture(picture);
+            continue;
+        }
+
+        picture.setUrl(filePath);
+
+        QByteArray fileData = FPicture::readLocalFileData(filePath);
+        if (!fileData.isEmpty())
+        {
+            picture.setData(fileData);
+        }
+
+        it.value().setPicture(picture);
+    }
+}
+
+QMap<QUuid,FPerson> FTree::storePictureUrls(const QString &treeFileName) const
+{
+    QMap<QUuid,FPerson> outPersons(this->persons);
+
+    QString destDir = QFileInfo(treeFileName).absolutePath();
+    QString baseDir = this->pictureBaseDir.isEmpty() ? destDir : this->pictureBaseDir;
+
+    for (auto it = outPersons.begin(); it != outPersons.end(); ++it)
+    {
+        FPicture picture = it.value().getPicture();
+
+        if (picture.getUrl().isEmpty() || picture.getData().isEmpty())
+        {
+            continue;
+        }
+
+        QString relativePath = relativeToBaseDir(picture.getUrl(),baseDir);
+
+        if (relativePath.isEmpty())
+        {
+            // Url can not be honored - embed the data instead.
+            RLogger::warning("Picture url \"%s\" points outside of the tree file directory \"%s\".\n",
+                             picture.getUrl().toUtf8().constData(),
+                             baseDir.toUtf8().constData());
+            picture.setUrl(QString());
+            it.value().setPicture(picture);
+            continue;
+        }
+
+        picture.setUrl(relativePath);
+
+        QString filePath = QDir(destDir).absoluteFilePath(relativePath);
+        QString filePathDir = QFileInfo(filePath).absolutePath();
+
+        if (!QDir().mkpath(filePathDir))
+        {
+            RLogger::warning("Failed to create picture directory \"%s\".\n",filePathDir.toUtf8().constData());
+        }
+
+        if (FPicture::writeLocalFileData(filePath,picture.getData()))
+        {
+            // Data stored in the referenced file are not embedded.
+            picture.setData(QByteArray());
+        }
+
+        it.value().setPicture(picture);
+    }
+
+    return outPersons;
+}
+
+void FTree::rebasePictureUrls(const QString &treeFileName)
+{
+    QString destDir = QFileInfo(treeFileName).absolutePath();
+    QString baseDir = this->pictureBaseDir.isEmpty() ? destDir : this->pictureBaseDir;
+
+    if (baseDir == destDir)
+    {
+        this->pictureBaseDir = destDir;
+        return;
+    }
+
+    for (auto it = this->persons.begin(); it != this->persons.end(); ++it)
+    {
+        FPicture picture = it.value().getPicture();
+
+        if (picture.getUrl().isEmpty())
+        {
+            continue;
+        }
+
+        QString relativePath = relativeToBaseDir(picture.getUrl(),baseDir);
+
+        if (relativePath.isEmpty())
+        {
+            continue;
+        }
+
+        picture.setUrl(QDir(destDir).absoluteFilePath(relativePath));
+        it.value().setPicture(picture);
+    }
+
+    this->pictureBaseDir = destDir;
+}
+
 void FTree::readFile(const QString &fileName)
 {
     if (fileName.isEmpty())
@@ -940,6 +1112,8 @@ void FTree::readXmlFile(const QString &fileName)
 
     file.close();
 
+    this->loadPictureUrls(fileName);
+
     RLogger::unindent();
 
     emit this->fileLoaded(fileName);
@@ -965,7 +1139,7 @@ void FTree::writeXmlFile(const QString &fileName) const
     stream.setAutoFormatting(true);
     stream.writeStartDocument();
 
-    this->writeXmlElement(stream,FTree::ElementName::tree);
+    this->writeXmlElement(stream,FTree::ElementName::tree,this->storePictureUrls(fileName));
 
     stream.writeEndDocument();
 
@@ -999,6 +1173,8 @@ void FTree::readJsonFile(const QString &fileName)
 
     file.close();
 
+    this->loadPictureUrls(fileName);
+
     RLogger::unindent();
 
     emit this->fileLoaded(fileName);
@@ -1020,7 +1196,7 @@ void FTree::writeJsonFile(const QString &fileName) const
     RLogger::info("Writing JSON file \"%s\"\n",fileName.toUtf8().constData());
     RLogger::indent();
 
-    qint64 bytesOut = file.write(QJsonDocument(this->toJson()).toJson());
+    qint64 bytesOut = file.write(QJsonDocument(this->toJson(this->storePictureUrls(fileName))).toJson());
 
     RLogger::info("Successfuly wrote \"%ld\" bytes to \"%s\".\n",bytesOut,file.fileName().toUtf8().constData());
 
@@ -1095,13 +1271,18 @@ void FTree::readXmlElement(QXmlStreamReader &stream, const QString &tag)
 
 void FTree::writeXmlElement(QXmlStreamWriter &stream, const QString &tag) const
 {
+    this->writeXmlElement(stream,tag,this->persons);
+}
+
+void FTree::writeXmlElement(QXmlStreamWriter &stream, const QString &tag, const QMap<QUuid,FPerson> &persons) const
+{
     stream.writeStartElement(tag);
     stream.writeAttribute(FTree::ElementName::version,FTree::version.toString());
 
     // Write list of persons
     stream.writeStartElement(FTree::ElementName::persons);
 
-    foreach (const FPerson &person, this->persons)
+    foreach (const FPerson &person, persons)
     {
         person.writeXmlElement(stream,FTree::ElementName::person);
     }
@@ -1163,12 +1344,17 @@ void FTree::fromJson(const QJsonObject &json)
 
 QJsonObject FTree::toJson() const
 {
+    return this->toJson(this->persons);
+}
+
+QJsonObject FTree::toJson(const QMap<QUuid,FPerson> &persons) const
+{
     QJsonObject json;
 
     json[FTree::ElementName::version] = this->version.toString();
 
     QJsonArray personsArray;
-    for (const FPerson &person : this->persons)
+    for (const FPerson &person : persons)
     {
         personsArray.append(person.toJson());
     }
@@ -1392,7 +1578,7 @@ Required fields:
 Optional fields:
 - "birth": Event object describing birth
 - "death": Event object describing death
-- "picture": Picture object with base64-encoded PNG photo
+- "picture": Picture object holding a PNG photo
 - "text": string, base64-encoded notes or biography
 
 NAME OBJECT
@@ -1426,8 +1612,13 @@ All fields optional:
 - "street-number": string
 
 PICTURE OBJECT
-Required:
+All fields optional:
+- "title": string
+- "description": string
+- "url": string, path to an image file, relative to the family tree file
 - "base64Data": string, base64-encoded PNG image
+The image is stored either in a separate file referenced by "url" or embedded
+as "base64Data". A picture stored in a referenced file carries no "base64Data".
 
 RELATION OBJECT
 A relation represents a partnership (marriage or similar) and its children.
@@ -1444,6 +1635,8 @@ RULES AND CONSTRAINTS
 - All UUIDs in "partners" and "children" must reference valid person IDs in the "persons" array.
 - File encoding is UTF-8.
 - "text" and "picture.base64Data" fields are base64-encoded.
+- "picture.url" is relative to the family tree file and must resolve to a file
+  at or below its directory.
 - Omitted optional fields mean the information is unknown, not that it doesn't exist.
 
 MINIMAL VALID EXAMPLE

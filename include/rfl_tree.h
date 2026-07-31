@@ -48,6 +48,31 @@ class FTree : public QObject
         QMap<QUuid,FPerson> persons;
         //! Map of relations
         QMap<QUuid,FRelation> relations;
+        //! Directory the tree was last read from or written to.
+        //! Picture urls are stored relative to this directory.
+        QString pictureBaseDir;
+
+    protected:
+
+        //! Resolve picture url against given base directory.
+        //! Return absolute file path if url points to a local file located
+        //! at or below baseDir, empty string otherwise.
+        static QString resolvePictureUrl(const QString &url, const QString &baseDir);
+
+        //! Convert all picture urls to absolute paths with respect to given
+        //! tree file and load picture data from the referenced files.
+        void loadPictureUrls(const QString &treeFileName);
+
+        //! Return a copy of the persons map with all picture urls converted
+        //! to paths relative to given tree file. Picture data are written to
+        //! the referenced files and dropped from the returned persons.
+        QMap<QUuid,FPerson> storePictureUrls(const QString &treeFileName) const;
+
+        //! Write XML element for given map of persons.
+        void writeXmlElement(QXmlStreamWriter &stream, const QString &tag, const QMap<QUuid,FPerson> &persons) const;
+
+        //! Create Json from object for given map of persons.
+        QJsonObject toJson(const QMap<QUuid,FPerson> &persons) const;
 
     public:
 
@@ -150,6 +175,10 @@ class FTree : public QObject
 
         //! Write to JSON file.
         void writeJsonFile(const QString &fileName) const;
+
+        //! Point all picture urls at the files written next to given tree file.
+        //! To be called after the tree has been successfully saved under a new name.
+        void rebasePictureUrls(const QString &treeFileName);
 
         //! Read XML element.
         void readXmlElement(QXmlStreamReader &stream, const QString &tag);

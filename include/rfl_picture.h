@@ -15,12 +15,14 @@ class FPicture
         {
             static const QString title;
             static const QString description;
+            static const QString url;
             static const QString data;
         };
         struct ElementDesc
         {
             static const QString title;
             static const QString description;
+            static const QString url;
             static const QString data;
         };
         static const uint maxWidth;
@@ -32,6 +34,8 @@ class FPicture
         QString title;
         //! Picture description.
         QString description;
+        //! Picture url.
+        QString url;
         //! Picture data.
         QByteArray data;
 
@@ -40,13 +44,27 @@ class FPicture
         //! Internal initialization function.
         void _init(const FPicture *pPicture = nullptr);
 
+        //! Convert given url to a local file path.
+        //! Return empty string if url is empty, relative or does not point to
+        //! a local file. Relative urls are rejected because they can only be
+        //! resolved against the family tree file, which FPicture does not know.
+        static QString toLocalFilePath(const QString &url);
+
     public:
+
+        //! Read picture content from a local file referenced by given url.
+        //! Url must be absolute. Return empty byte array if the file can not be read.
+        static QByteArray readLocalFileData(const QString &url);
+
+        //! Write picture content to a local file referenced by given url.
+        //! Url must be absolute. Return false if the file can not be written.
+        static bool writeLocalFileData(const QString &url, const QByteArray &data);
 
         //! Constructor.
         FPicture();
 
         //! Full constructor.
-        FPicture(const QString &title, const QString &description, const QByteArray &base64Data);
+        FPicture(const QString &title, const QString &description, const QString &url, const QByteArray &data);
 
         //! Copy constructor.
         FPicture(const FPicture &picture);
@@ -74,6 +92,12 @@ class FPicture
 
         //! Set new description.
         void setDescription(const QString &description);
+
+        //! Return const reference to url.
+        const QString &getUrl() const;
+
+        //! Set new url.
+        void setUrl(const QString &url);
 
         //! Return const reference to picture data.
         const QByteArray &getData() const;
