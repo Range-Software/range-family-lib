@@ -51,6 +51,8 @@ class FTree : public QObject
         //! Directory the tree was last read from or written to.
         //! Picture urls are stored relative to this directory.
         QString pictureBaseDir;
+        //! Complete base name of the tree file the picture files are named after.
+        QString pictureBaseName;
 
     protected:
 
@@ -58,6 +60,16 @@ class FTree : public QObject
         //! Return absolute file path if url points to a local file located
         //! at or below baseDir, empty string otherwise.
         static QString resolvePictureUrl(const QString &url, const QString &baseDir);
+
+        //! Return name of the picture file belonging to given person next to
+        //! a tree file with given complete base name.
+        static QString pictureFileName(const QString &treeBaseName, const QUuid &personId);
+
+        //! Return path of given picture, relative to given tree file, after the tree
+        //! has been saved as that file. Picture files which are named after the tree
+        //! file are renamed along with it. Return empty string if the url can not be
+        //! honored.
+        QString rebasedPictureFilePath(const QString &url, const QUuid &personId, const QString &treeFileName) const;
 
         //! Convert all picture urls to absolute paths with respect to given
         //! tree file and load picture data from the referenced files.
@@ -175,6 +187,11 @@ class FTree : public QObject
 
         //! Write to JSON file.
         void writeJsonFile(const QString &fileName) const;
+
+        //! Return absolute path of the picture file belonging to given person
+        //! next to given tree file. Return empty string if the tree file name is
+        //! empty or the person ID is null.
+        static QString pictureFilePath(const QString &treeFileName, const QUuid &personId);
 
         //! Point all picture urls at the files written next to given tree file.
         //! To be called after the tree has been successfully saved under a new name.

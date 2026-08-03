@@ -20,6 +20,16 @@
   not be read or written.
 - Added `FTree::rebasePictureUrls()` to re-point picture urls at the files
   written next to a tree which has been saved under a new name.
+- Saving a tree under a different file path moves its picture files along with
+  it: the images are written next to the new tree file and the files they were
+  stored in before are removed. Pictures named after the tree file (see
+  `FTree::pictureFilePath()`) are renamed to follow the new tree file name,
+  every other picture keeps its file name and sub-directory.
+- Added `FTree::pictureFilePath()` returning the path of the picture file
+  belonging to a person next to a given tree file
+  (`<tree base name>_<person id>.png`). It is the single definition of the
+  picture file naming convention, used both when a picture is attached and when
+  a tree is saved under a new name.
 - Added `FPicture::readLocalFileData()` and `FPicture::writeLocalFileData()`
   helpers performing the image file I/O. Both require an absolute url;
   relative urls are rejected because they can only be resolved against the

@@ -912,9 +912,60 @@ QString FTree::resolvePictureUrl(const QString &url, const QString &baseDir)
     return filePath;
 }
 
+QString FTree::pictureFileName(const QString &treeBaseName, const QUuid &personId)
+{
+    if (treeBaseName.isEmpty() || personId.isNull())
+    {
+        return QString();
+    }
+
+    // Picture data are stored as PNG - the file name must carry a matching suffix.
+    return QString("%1_%2.png").arg(treeBaseName,personId.toString(QUuid::WithoutBraces));
+}
+
+QString FTree::pictureFilePath(const QString &treeFileName, const QUuid &personId)
+{
+    if (treeFileName.isEmpty())
+    {
+        return QString();
+    }
+
+    QFileInfo treeFileInfo(treeFileName);
+
+    QString fileName = FTree::pictureFileName(treeFileInfo.completeBaseName(),personId);
+
+    if (fileName.isEmpty())
+    {
+        return QString();
+    }
+
+    return QDir(treeFileInfo.absolutePath()).absoluteFilePath(fileName);
+}
+
+QString FTree::rebasedPictureFilePath(const QString &url, const QUuid &personId, const QString &treeFileName) const
+{
+    QString baseDir = this->pictureBaseDir.isEmpty() ? QFileInfo(treeFileName).absolutePath() : this->pictureBaseDir;
+
+    QString relativePath = relativeToBaseDir(url,baseDir);
+
+    if (relativePath.isEmpty())
+    {
+        return QString();
+    }
+
+    if (QFileInfo(url).fileName() == FTree::pictureFileName(this->pictureBaseName,personId))
+    {
+        // Picture file is named after the tree file - it is renamed along with it.
+        relativePath = FTree::pictureFileName(QFileInfo(treeFileName).completeBaseName(),personId);
+    }
+
+    return relativePath;
+}
+
 void FTree::loadPictureUrls(const QString &treeFileName)
 {
     this->pictureBaseDir = QFileInfo(treeFileName).absolutePath();
+    this->pictureBaseName = QFileInfo(treeFileName).completeBaseName();
 
     for (auto it = this->persons.begin(); it != this->persons.end(); ++it)
     {
@@ -963,7 +1014,9 @@ QMap<QUuid,FPerson> FTree::storePictureUrls(const QString &treeFileName) const
             continue;
         }
 
-        QString relativePath = relativeToBaseDir(picture.getUrl(),baseDir);
+        QString previousFilePath = picture.getUrl();
+
+        QString relativePath = this->rebasedPictureFilePath(previousFilePath,it.key(),treeFileName);
 
         if (relativePath.isEmpty())
         {
@@ -990,6 +1043,21 @@ QMap<QUuid,FPerson> FTree::storePictureUrls(const QString &treeFileName) const
         {
             // Data stored in the referenced file are not embedded.
             picture.setData(QByteArray());
+
+            // The picture has moved - the file it was stored in before is removed.
+            if (QFileInfo(filePath) != QFileInfo(previousFilePath) && QFile::exists(previousFilePath))
+            {
+                if (QFile::remove(previousFilePath))
+                {
+                    RLogger::info("Picture file \"%s\" was moved to \"%s\".\n",
+                                  previousFilePath.toUtf8().constData(),
+                                  filePath.toUtf8().constData());
+                }
+                else
+                {
+                    RLogger::warning("Failed to remove picture file \"%s\".\n",previousFilePath.toUtf8().constData());
+                }
+            }
         }
 
         it.value().setPicture(picture);
@@ -1001,11 +1069,11 @@ QMap<QUuid,FPerson> FTree::storePictureUrls(const QString &treeFileName) const
 void FTree::rebasePictureUrls(const QString &treeFileName)
 {
     QString destDir = QFileInfo(treeFileName).absolutePath();
+    QString destBaseName = QFileInfo(treeFileName).completeBaseName();
     QString baseDir = this->pictureBaseDir.isEmpty() ? destDir : this->pictureBaseDir;
 
-    if (baseDir == destDir)
+    if (baseDir == destDir && this->pictureBaseName == destBaseName)
     {
-        this->pictureBaseDir = destDir;
         return;
     }
 
@@ -1018,7 +1086,7 @@ void FTree::rebasePictureUrls(const QString &treeFileName)
             continue;
         }
 
-        QString relativePath = relativeToBaseDir(picture.getUrl(),baseDir);
+        QString relativePath = this->rebasedPictureFilePath(picture.getUrl(),it.key(),treeFileName);
 
         if (relativePath.isEmpty())
         {
@@ -1030,6 +1098,7 @@ void FTree::rebasePictureUrls(const QString &treeFileName)
     }
 
     this->pictureBaseDir = destDir;
+    this->pictureBaseName = destBaseName;
 }
 
 void FTree::readFile(const QString &fileName)
