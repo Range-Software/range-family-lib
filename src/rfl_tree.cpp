@@ -920,7 +920,7 @@ QString FTree::pictureFileName(const QString &treeBaseName, const QUuid &personI
     }
 
     // Picture data are stored as PNG - the file name must carry a matching suffix.
-    return QString("%1_%2.png").arg(treeBaseName,personId.toString(QUuid::WithoutBraces));
+    return QString("%1-%2.png").arg(treeBaseName,personId.toString(QUuid::WithoutBraces));
 }
 
 QString FTree::pictureFilePath(const QString &treeFileName, const QUuid &personId)
