@@ -162,17 +162,22 @@
 <context>
     <name>FPicture</name>
     <message>
-        <location filename="../src/rfl_picture.cpp" line="7"/>
+        <location filename="../src/rfl_picture.cpp" line="14"/>
         <source>Title</source>
         <translation>Názov</translation>
     </message>
     <message>
-        <location filename="../src/rfl_picture.cpp" line="8"/>
+        <location filename="../src/rfl_picture.cpp" line="15"/>
         <source>Description</source>
         <translation>Popis</translation>
     </message>
     <message>
-        <location filename="../src/rfl_picture.cpp" line="9"/>
+        <location filename="../src/rfl_picture.cpp" line="16"/>
+        <source>Picture url</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_picture.cpp" line="17"/>
         <source>Picture binary data</source>
         <translation>Binárne dáta obrázku</translation>
     </message>
@@ -233,32 +238,32 @@
 <context>
     <name>FTree</name>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="22"/>
+        <location filename="../src/rfl_tree.cpp" line="24"/>
         <source>tree</source>
         <translation>strom</translation>
     </message>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="23"/>
+        <location filename="../src/rfl_tree.cpp" line="25"/>
         <source>version</source>
         <translation>verzia</translation>
     </message>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="24"/>
+        <location filename="../src/rfl_tree.cpp" line="26"/>
         <source>persons</source>
         <translation>osoby</translation>
     </message>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="25"/>
+        <location filename="../src/rfl_tree.cpp" line="27"/>
         <source>relations</source>
         <translation>vzťahy</translation>
     </message>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="26"/>
+        <location filename="../src/rfl_tree.cpp" line="28"/>
         <source>person</source>
         <translation>osoba</translation>
     </message>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="27"/>
+        <location filename="../src/rfl_tree.cpp" line="29"/>
         <source>relation</source>
         <translation>vzťah</translation>
     </message>
@@ -272,10 +277,10 @@
         <location filename="../src/rfl_geo_coordinate.cpp" line="170"/>
         <location filename="../src/rfl_name.cpp" line="208"/>
         <location filename="../src/rfl_person.cpp" line="289"/>
-        <location filename="../src/rfl_picture.cpp" line="101"/>
+        <location filename="../src/rfl_picture.cpp" line="220"/>
         <location filename="../src/rfl_place.cpp" line="121"/>
         <location filename="../src/rfl_relation.cpp" line="334"/>
-        <location filename="../src/rfl_tree.cpp" line="1042"/>
+        <location filename="../src/rfl_tree.cpp" line="1287"/>
         <source>Missing element</source>
         <translation>Chýbajúci element</translation>
     </message>
@@ -286,14 +291,14 @@
         <location filename="../src/rfl_geo_coordinate.cpp" line="188"/>
         <location filename="../src/rfl_name.cpp" line="230"/>
         <location filename="../src/rfl_person.cpp" line="327"/>
-        <location filename="../src/rfl_picture.cpp" line="119"/>
+        <location filename="../src/rfl_picture.cpp" line="242"/>
         <location filename="../src/rfl_place.cpp" line="135"/>
         <location filename="../src/rfl_relation.cpp" line="356"/>
         <location filename="../src/rfl_relation.cpp" line="370"/>
         <location filename="../src/rfl_relation.cpp" line="384"/>
-        <location filename="../src/rfl_tree.cpp" line="1068"/>
-        <location filename="../src/rfl_tree.cpp" line="1084"/>
-        <location filename="../src/rfl_tree.cpp" line="1090"/>
+        <location filename="../src/rfl_tree.cpp" line="1313"/>
+        <location filename="../src/rfl_tree.cpp" line="1329"/>
+        <location filename="../src/rfl_tree.cpp" line="1335"/>
         <source>Unexpected element</source>
         <translation>Neočakávaný element</translation>
     </message>
@@ -305,12 +310,12 @@
     <message>
         <location filename="../src/rfl_person.cpp" line="293"/>
         <location filename="../src/rfl_relation.cpp" line="338"/>
-        <location filename="../src/rfl_tree.cpp" line="1047"/>
+        <location filename="../src/rfl_tree.cpp" line="1292"/>
         <source>Missing attribute</source>
         <translation>Chýbajúci atribút</translation>
     </message>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="1052"/>
+        <location filename="../src/rfl_tree.cpp" line="1297"/>
         <source>File version is not supported</source>
         <translation>Nepodporovaná verzia súboru</translation>
     </message>
