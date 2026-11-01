@@ -1,3 +1,18 @@
+## Version 1.2.0
+
+### Improvements
+
+- The strings of the library are translated to Czech, German, Spanish, French,
+  Italian, Polish and Ukrainian in addition to English and Slovak. Translation
+  files of all languages are part of the library and are kept up to date with
+  its strings.
+- The element descriptions used in file parsing messages (`tree`, `version`,
+  `persons`, `relations`, `person`, `relation`) and the `fuzzy` marker appended
+  to a printed date are translated as well. The element names used to read and
+  write the files are unchanged, so files stay readable in every language.
+
+---
+
 ## Version 1.1.0
 
 ### Improvements

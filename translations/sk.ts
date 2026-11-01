@@ -174,7 +174,7 @@
     <message>
         <location filename="../src/rfl_picture.cpp" line="16"/>
         <source>Picture url</source>
-        <translation type="unfinished"></translation>
+        <translation>URL obrázka</translation>
     </message>
     <message>
         <location filename="../src/rfl_picture.cpp" line="17"/>

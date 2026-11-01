@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="es_ES">
+<context>
+    <name>FAddress</name>
+    <message>
+        <location filename="../src/rfl_address.cpp" line="11"/>
+        <source>Street</source>
+        <translation>Calle</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_address.cpp" line="12"/>
+        <source>Street number</source>
+        <translation>Número</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_address.cpp" line="13"/>
+        <source>City</source>
+        <translation>Ciudad</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_address.cpp" line="14"/>
+        <source>Postal code</source>
+        <translation>Código postal</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_address.cpp" line="15"/>
+        <source>Country</source>
+        <translation>País</translation>
+    </message>
+</context>
+<context>
+    <name>FDate</name>
+    <message>
+        <location filename="../src/rfl_date.cpp" line="13"/>
+        <source>Fuzzy</source>
+        <translation>Aproximado</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_date.cpp" line="14"/>
+        <source>Day</source>
+        <translation>Día</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_date.cpp" line="15"/>
+        <source>Month</source>
+        <translation>Mes</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_date.cpp" line="16"/>
+        <source>Year</source>
+        <translation>Año</translation>
+    </message>
+</context>
+<context>
+    <name>FEvent</name>
+    <message>
+        <location filename="../src/rfl_event.cpp" line="8"/>
+        <source>Date</source>
+        <translation>Fecha</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_event.cpp" line="9"/>
+        <source>Place</source>
+        <translation>Lugar</translation>
+    </message>
+</context>
+<context>
+    <name>FGeoCoordinate</name>
+    <message>
+        <location filename="../src/rfl_geo_coordinate.cpp" line="11"/>
+        <source>Latitude</source>
+        <translation>Latitud</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_geo_coordinate.cpp" line="12"/>
+        <source>Longitude</source>
+        <translation>Longitud</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_geo_coordinate.cpp" line="13"/>
+        <source>Altitude</source>
+        <translation>Altitud</translation>
+    </message>
+</context>
+<context>
+    <name>FName</name>
+    <message>
+        <location filename="../src/rfl_name.cpp" line="10"/>
+        <source>First name</source>
+        <translation>Nombre</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_name.cpp" line="11"/>
+        <source>Middle name</source>
+        <translation>Segundo nombre</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_name.cpp" line="12"/>
+        <source>Last name</source>
+        <translation>Apellido</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_name.cpp" line="13"/>
+        <source>Maiden name</source>
+        <translation>Apellido de soltera</translation>
+    </message>
+</context>
+<context>
+    <name>FPerson</name>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="13"/>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="14"/>
+        <source>Sex</source>
+        <translation>Sexo</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="15"/>
+        <source>Name</source>
+        <translation>Nombre</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="16"/>
+        <source>Birth</source>
+        <translation>Nacimiento</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="17"/>
+        <source>Death</source>
+        <translation>Fallecimiento</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="18"/>
+        <source>Text</source>
+        <translation>Texto</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="19"/>
+        <source>Picture</source>
+        <translation>Imagen</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="21"/>
+        <source>Male</source>
+        <translation>Hombre</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="22"/>
+        <source>Female</source>
+        <translation>Mujer</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="23"/>
+        <source>Other</source>
+        <translation>Otro</translation>
+    </message>
+</context>
+<context>
+    <name>FPicture</name>
+    <message>
+        <location filename="../src/rfl_picture.cpp" line="14"/>
+        <source>Title</source>
+        <translation>Título</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_picture.cpp" line="15"/>
+        <source>Description</source>
+        <translation>Descripción</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_picture.cpp" line="16"/>
+        <source>Picture url</source>
+        <translation>URL de la imagen</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_picture.cpp" line="17"/>
+        <source>Picture binary data</source>
+        <translation>Datos binarios de la imagen</translation>
+    </message>
+</context>
+<context>
+    <name>FPlace</name>
+    <message>
+        <location filename="../src/rfl_place.cpp" line="8"/>
+        <source>Address</source>
+        <translation>Dirección</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_place.cpp" line="9"/>
+        <source>Coordinate</source>
+        <translation>Coordenada</translation>
+    </message>
+</context>
+<context>
+    <name>FRelation</name>
+    <message>
+        <location filename="../src/rfl_relation.cpp" line="16"/>
+        <source>ID</source>
+        <translation>ID</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_relation.cpp" line="17"/>
+        <location filename="../src/rfl_relation.cpp" line="290"/>
+        <source>Partners</source>
+        <translation>Parejas</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_relation.cpp" line="18"/>
+        <location filename="../src/rfl_relation.cpp" line="291"/>
+        <source>Children</source>
+        <translation>Hijos</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_relation.cpp" line="19"/>
+        <source>Partner ID</source>
+        <translation>ID de la pareja</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_relation.cpp" line="20"/>
+        <source>Child ID</source>
+        <translation>ID del hijo</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_relation.cpp" line="21"/>
+        <source>Begin</source>
+        <translation>Inicio</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_relation.cpp" line="22"/>
+        <source>End</source>
+        <translation>Fin</translation>
+    </message>
+</context>
+<context>
+    <name>FTree</name>
+    <message>
+        <location filename="../src/rfl_tree.cpp" line="24"/>
+        <source>tree</source>
+        <translation>árbol</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_tree.cpp" line="25"/>
+        <source>version</source>
+        <translation>versión</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_tree.cpp" line="26"/>
+        <source>persons</source>
+        <translation>personas</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_tree.cpp" line="27"/>
+        <source>relations</source>
+        <translation>relaciones</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_tree.cpp" line="28"/>
+        <source>person</source>
+        <translation>persona</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_tree.cpp" line="29"/>
+        <source>relation</source>
+        <translation>relación</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../src/rfl_address.cpp" line="248"/>
+        <location filename="../src/rfl_date.cpp" line="199"/>
+        <location filename="../src/rfl_event.cpp" line="121"/>
+        <location filename="../src/rfl_geo_coordinate.cpp" line="170"/>
+        <location filename="../src/rfl_name.cpp" line="208"/>
+        <location filename="../src/rfl_person.cpp" line="289"/>
+        <location filename="../src/rfl_picture.cpp" line="220"/>
+        <location filename="../src/rfl_place.cpp" line="121"/>
+        <location filename="../src/rfl_relation.cpp" line="334"/>
+        <location filename="../src/rfl_tree.cpp" line="1287"/>
+        <source>Missing element</source>
+        <translation>Elemento ausente</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_address.cpp" line="274"/>
+        <location filename="../src/rfl_date.cpp" line="221"/>
+        <location filename="../src/rfl_event.cpp" line="135"/>
+        <location filename="../src/rfl_geo_coordinate.cpp" line="188"/>
+        <location filename="../src/rfl_name.cpp" line="230"/>
+        <location filename="../src/rfl_person.cpp" line="327"/>
+        <location filename="../src/rfl_picture.cpp" line="242"/>
+        <location filename="../src/rfl_place.cpp" line="135"/>
+        <location filename="../src/rfl_relation.cpp" line="356"/>
+        <location filename="../src/rfl_relation.cpp" line="370"/>
+        <location filename="../src/rfl_relation.cpp" line="384"/>
+        <location filename="../src/rfl_tree.cpp" line="1313"/>
+        <location filename="../src/rfl_tree.cpp" line="1329"/>
+        <location filename="../src/rfl_tree.cpp" line="1335"/>
+        <source>Unexpected element</source>
+        <translation>Elemento inesperado</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_date.cpp" line="182"/>
+        <source>fuzzy</source>
+        <translation>aproximado</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_person.cpp" line="293"/>
+        <location filename="../src/rfl_relation.cpp" line="338"/>
+        <location filename="../src/rfl_tree.cpp" line="1292"/>
+        <source>Missing attribute</source>
+        <translation>Atributo ausente</translation>
+    </message>
+    <message>
+        <location filename="../src/rfl_tree.cpp" line="1297"/>
+        <source>File version is not supported</source>
+        <translation>La versión del archivo no es compatible</translation>
+    </message>
+</context>
+</TS>
