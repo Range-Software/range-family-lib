@@ -3,6 +3,7 @@ qt_add_library(range-family-lib
     STATIC
         src/rfl_address.cpp
         src/rfl_date.cpp
+        src/rfl_date_estimator.cpp
         src/rfl_event.cpp
         src/rfl_geo_coordinate.cpp
         src/rfl_name.cpp
@@ -17,6 +18,7 @@ qt_add_library(range-family-lib
         src/rfl_tree_model_item.cpp
         include/rfl_address.h
         include/rfl_date.h
+        include/rfl_date_estimator.h
         include/rfl_event.h
         include/rfl_geo_coordinate.h
         include/rfl_name.h

@@ -296,7 +296,7 @@ QString FRelation::toShortString() const
         {
             shortString += " ";
         }
-        shortString += "(" + this->begin.getDate().toDate().toString() + ")";
+        shortString += "(" + this->begin.getDate().toLocaleString() + ")";
     }
 
     return shortString;

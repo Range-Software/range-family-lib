@@ -10,6 +10,37 @@
   `persons`, `relations`, `person`, `relation`) and the `fuzzy` marker appended
   to a printed date are translated as well. The element names used to read and
   write the files are unchanged, so files stay readable in every language.
+- Dates can leave out the day, or both the day and the month. `FDate::isValid()`
+  accepts them, `FDate::getPrecision()` tells which parts are set,
+  `FDate::toDate()` returns the earliest possible day and the new
+  `FDate::toLatestDate()` the latest one. `FDate::toString()` prints only the
+  parts which are set and the new `FDate::toLocaleString()` does the same in the
+  format of the current locale. The file formats are unchanged; the description
+  of the JSON format says that `day` and `month` are optional.
+- New `FDateEstimator` estimates birth and death dates of a person. It narrows
+  the possible range of every date in the whole tree, using sex specific limits
+  of parental age, dates of partners, deaths of parents, siblings and relation
+  dates, and then picks the most likely date from typical ages. Fuzzy dates of
+  relatives are used with a tolerance. Each result is an `FDateEstimate` with a
+  status (unknown, known, estimated, conflict), the date and its limits.
+
+### API changes
+
+- `FTree::findPersonBirthAndDeathDates()` returns two `FDateEstimate` objects
+  instead of two `FDate` objects.
+- `FConstants::maxReproductiveAge` is replaced by `maxReproductiveAgeFemale`
+  (50) and `maxReproductiveAgeMale` (75). `FConstants::minMarriageAge` (15) is
+  new and `FConstants::maxAge` is raised from 100 to 110.
+
+### Bug fixes
+
+- `FTree::findPersonBirthAndDeathDates()` replaced a known death date with an
+  estimate when the birth date was missing or fuzzy, returned the upper limit as
+  the death date of a person known only by the parents, returned the lower limit
+  as the birth date of a person known only by a sibling, and averaged
+  contradicting limits without reporting them.
+- `FDate::merge()` replaced a date with a missing part by the other date even
+  when that one was empty. The more precise of the two dates is kept now.
 
 ---
 

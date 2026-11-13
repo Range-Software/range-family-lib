@@ -8,9 +8,11 @@ namespace FConstants
     static const uint eod = RConstants::eod;
     static const double eps = RConstants::eps;
 
-    static const int maxAge = 100;
+    static const int maxAge = 110;
+    static const int minMarriageAge = 15;
     static const int minReproductiveAge = 15;
-    static const int maxReproductiveAge = 50;
+    static const int maxReproductiveAgeFemale = 50;
+    static const int maxReproductiveAgeMale = 75;
 
     enum Direction
     {

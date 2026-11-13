@@ -261,7 +261,7 @@ QString FPerson::toShortString() const
         {
             shortString += " ";
         }
-        shortString += "(" + this->birth.getDate().toDate().toString() + ")";
+        shortString += "(" + this->birth.getDate().toLocaleString() + ")";
     }
 
     return shortString;

@@ -4,6 +4,7 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include <QDate>
+#include <QLocale>
 #include <QJsonObject>
 
 class FDate
@@ -24,6 +25,15 @@ class FDate
             static const QString day;
             static const QString month;
             static const QString year;
+        };
+
+        //! Finest part of the date which is set.
+        enum Precision
+        {
+            None = 0,
+            Year,
+            Month,
+            Day
         };
 
     protected:
@@ -75,7 +85,11 @@ class FDate
         void empty(bool fuzzy = false);
 
         //! Check if values are valid.
+        //! Day or both day and month can be left unset.
         bool isValid() const;
+
+        //! Return finest part of the date which is set.
+        Precision getPrecision() const;
 
         //! Validate values.
         void validate() const;
@@ -111,10 +125,17 @@ class FDate
         uint calculateAge() const;
 
         //! Convert to QDate.
+        //! Earliest possible day is returned if day or month is not set.
         QDate toDate() const;
+
+        //! Return latest possible day.
+        QDate toLatestDate() const;
 
         //! Convert to single line string.
         QString toString() const;
+
+        //! Convert to string in format of current locale, only parts which are set are included.
+        QString toLocaleString(QLocale::FormatType format = QLocale::LongFormat) const;
 
         //! Print whole structure.
         void print() const;

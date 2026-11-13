@@ -9,6 +9,7 @@
 
 #include <rbl_version.h>
 
+#include "rfl_date_estimator.h"
 #include "rfl_person.h"
 #include "rfl_relation.h"
 #include "rfl_tree_diff.h"
@@ -157,9 +158,9 @@ class FTree : public QObject
         //! Merge two persons.
         void mergePersons(const QUuid &personId1, const QUuid &personId2);
 
-        //! Find person birth date.
-        //! If a birth date is not set it will calculate fuzzy birth date.
-        void findPersonBirthAndDeathDates(const QUuid &personId, FDate &birthDate, FDate &deathDate) const;
+        //! Find person birth and death dates.
+        //! Dates which are not recorded or are fuzzy are estimated from dates of relatives.
+        void findPersonBirthAndDeathDates(const QUuid &personId, FDateEstimate &birth, FDateEstimate &death) const;
 
         //! Import missing persons and relations.
         void importMissing(const FTree *pTree, uint &nImportedPersons, uint &nImportedRelations);

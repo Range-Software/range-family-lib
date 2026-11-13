@@ -108,7 +108,37 @@ void FDate::empty(bool fuzzy)
 
 bool FDate::isValid() const
 {
-    return this->isEmpty() || QDate::isValid(this->year,this->month,this->day);
+    if (this->isEmpty())
+    {
+        return true;
+    }
+    if (this->year == INT_MIN)
+    {
+        return false;
+    }
+    if (this->day == 0)
+    {
+        // Year 0 does not exist.
+        return this->year != 0 && this->month >= 0 && this->month <= 12;
+    }
+    return QDate::isValid(this->year,this->month,this->day);
+}
+
+FDate::Precision FDate::getPrecision() const
+{
+    if (this->year == INT_MIN)
+    {
+        return FDate::None;
+    }
+    if (this->month == 0)
+    {
+        return FDate::Year;
+    }
+    if (this->day == 0)
+    {
+        return FDate::Month;
+    }
+    return FDate::Day;
 }
 
 void FDate::validate() const
@@ -161,7 +191,7 @@ void FDate::setYear(int year)
 
 void FDate::merge(const FDate &date)
 {
-    if (this->day == 0 || this->month == 0 || this->year == INT_MIN)
+    if (date.getPrecision() > this->getPrecision())
     {
         (*this) = date;
     }
@@ -174,12 +204,47 @@ uint FDate::calculateAge() const
 
 QDate FDate::toDate() const
 {
-    return QDate(this->year,this->month,this->day);
+    switch (this->getPrecision())
+    {
+        case FDate::Year:  return QDate(this->year,1,1);
+        case FDate::Month: return QDate(this->year,this->month,1);
+        case FDate::Day:   return QDate(this->year,this->month,this->day);
+        default:           return QDate();
+    }
+}
+
+QDate FDate::toLatestDate() const
+{
+    switch (this->getPrecision())
+    {
+        case FDate::Year:  return QDate(this->year,12,31);
+        case FDate::Month: return QDate(this->year,this->month,1).addMonths(1).addDays(-1);
+        case FDate::Day:   return QDate(this->year,this->month,this->day);
+        default:           return QDate();
+    }
 }
 
 QString FDate::toString() const
 {
-    return this->toDate().toString("dd.MM.yyyy") + (this->fuzzy ? " (" + QObject::tr("fuzzy") + ")" : "");
+    QString format;
+    switch (this->getPrecision())
+    {
+        case FDate::Year:  format = "yyyy"; break;
+        case FDate::Month: format = "MM.yyyy"; break;
+        default:           format = "dd.MM.yyyy"; break;
+    }
+    return this->toDate().toString(format) + (this->fuzzy ? " (" + QObject::tr("fuzzy") + ")" : "");
+}
+
+QString FDate::toLocaleString(QLocale::FormatType format) const
+{
+    QLocale locale;
+    switch (this->getPrecision())
+    {
+        case FDate::Year:  return QString::number(this->year);
+        case FDate::Month: return locale.standaloneMonthName(this->month,format) + " " + QString::number(this->year);
+        default:           return locale.toString(this->toDate(),format);
+    }
 }
 
 void FDate::print() const
