@@ -41,6 +41,11 @@
   contradicting limits without reporting them.
 - `FDate::merge()` replaced a date with a missing part by the other date even
   when that one was empty. The more precise of the two dates is kept now.
+- `FTree::writeFile()` rewrote every picture file each time the tree was saved,
+  even when the picture did not change. Touching the files made file
+  synchronization (Cloud, iCloud and similar) transfer all of them again.
+  `FPicture::writeLocalFileData()` now leaves a file alone when its content is
+  the same.
 
 ---
 

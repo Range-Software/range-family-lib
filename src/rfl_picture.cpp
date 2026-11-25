@@ -103,6 +103,19 @@ bool FPicture::writeLocalFileData(const QString &url, const QByteArray &data)
     }
 
     QFile file(fileName);
+
+    // Do not rewrite unchanged file - touching it would needlessly trigger file synchronization (cloud, iCloud, ...).
+    if (file.exists() && file.size() == data.size() && file.open(QIODevice::ReadOnly))
+    {
+        bool unchanged = (file.readAll() == data);
+        file.close();
+        if (unchanged)
+        {
+            RLogger::debug("Picture file \"%s\" is up to date.\n",fileName.toUtf8().constData());
+            return true;
+        }
+    }
+
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         RLogger::warning("Failed to open picture file \"%s\" for writing. %s\n",
