@@ -272,50 +272,50 @@
     <name>QObject</name>
     <message>
         <location filename="../src/rfl_address.cpp" line="248"/>
-        <location filename="../src/rfl_date.cpp" line="199"/>
+        <location filename="../src/rfl_date.cpp" line="264"/>
         <location filename="../src/rfl_event.cpp" line="121"/>
         <location filename="../src/rfl_geo_coordinate.cpp" line="170"/>
         <location filename="../src/rfl_name.cpp" line="208"/>
         <location filename="../src/rfl_person.cpp" line="289"/>
-        <location filename="../src/rfl_picture.cpp" line="220"/>
+        <location filename="../src/rfl_picture.cpp" line="233"/>
         <location filename="../src/rfl_place.cpp" line="121"/>
         <location filename="../src/rfl_relation.cpp" line="334"/>
-        <location filename="../src/rfl_tree.cpp" line="1287"/>
+        <location filename="../src/rfl_tree.cpp" line="1047"/>
         <source>Missing element</source>
         <translation>Elemento ausente</translation>
     </message>
     <message>
         <location filename="../src/rfl_address.cpp" line="274"/>
-        <location filename="../src/rfl_date.cpp" line="221"/>
+        <location filename="../src/rfl_date.cpp" line="286"/>
         <location filename="../src/rfl_event.cpp" line="135"/>
         <location filename="../src/rfl_geo_coordinate.cpp" line="188"/>
         <location filename="../src/rfl_name.cpp" line="230"/>
         <location filename="../src/rfl_person.cpp" line="327"/>
-        <location filename="../src/rfl_picture.cpp" line="242"/>
+        <location filename="../src/rfl_picture.cpp" line="255"/>
         <location filename="../src/rfl_place.cpp" line="135"/>
         <location filename="../src/rfl_relation.cpp" line="356"/>
         <location filename="../src/rfl_relation.cpp" line="370"/>
         <location filename="../src/rfl_relation.cpp" line="384"/>
-        <location filename="../src/rfl_tree.cpp" line="1313"/>
-        <location filename="../src/rfl_tree.cpp" line="1329"/>
-        <location filename="../src/rfl_tree.cpp" line="1335"/>
+        <location filename="../src/rfl_tree.cpp" line="1073"/>
+        <location filename="../src/rfl_tree.cpp" line="1089"/>
+        <location filename="../src/rfl_tree.cpp" line="1095"/>
         <source>Unexpected element</source>
         <translation>Elemento inesperado</translation>
     </message>
     <message>
-        <location filename="../src/rfl_date.cpp" line="182"/>
+        <location filename="../src/rfl_date.cpp" line="236"/>
         <source>fuzzy</source>
         <translation>aproximado</translation>
     </message>
     <message>
         <location filename="../src/rfl_person.cpp" line="293"/>
         <location filename="../src/rfl_relation.cpp" line="338"/>
-        <location filename="../src/rfl_tree.cpp" line="1292"/>
+        <location filename="../src/rfl_tree.cpp" line="1052"/>
         <source>Missing attribute</source>
         <translation>Atributo ausente</translation>
     </message>
     <message>
-        <location filename="../src/rfl_tree.cpp" line="1297"/>
+        <location filename="../src/rfl_tree.cpp" line="1057"/>
         <source>File version is not supported</source>
         <translation>La versión del archivo no es compatible</translation>
     </message>

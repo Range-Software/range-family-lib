@@ -1401,20 +1401,19 @@ The JSON file has three top-level keys:
 PERSON OBJECT
 Required fields:
 - "id": string, UUID v4, unique identifier
-- "name": Name object (see below)
-- "sex": string, "male" or "female"
 
-Optional fields:
+Optional fields, a field is left out if it is empty:
+- "name": Name object (see below)
+- "sex": string, "male", "female" or "other"
 - "birth": Event object describing birth
 - "death": Event object describing death
 - "picture": Picture object holding a PNG photo
 - "text": string, base64-encoded notes or biography
 
 NAME OBJECT
-Required:
+All fields optional, a field is left out if it is empty:
 - "first-name": string
 - "last-name": string
-Optional:
 - "middle-name": string
 - "maiden-name": string, birth surname before marriage
 
@@ -1428,17 +1427,26 @@ Leave out "day" if only month and year are known, leave out both "day" and "mont
 - "year": integer, required when date is present
 - "month": integer (1-12)
 - "day": integer (1-31)
-- "fuzzy": boolean, true if date is approximate or uncertain
+- "fuzzy": boolean, true if date is approximate or uncertain, false if left out
 
 PLACE OBJECT
 Optional:
 - "address": Address object
+- "geo-coordinate": Geo coordinate object
 
 ADDRESS OBJECT
 All fields optional:
 - "city": string
 - "country": string
-- "street-number": string
+- "street": string, street name
+- "street-number": string, house number
+- "postal-code": string
+
+GEO COORDINATE OBJECT
+All fields optional:
+- "latitude": number, degrees
+- "longitude": number, degrees
+- "altitude": number, meters
 
 PICTURE OBJECT
 All fields optional:
@@ -1473,7 +1481,7 @@ MINIMAL VALID EXAMPLE
   "version": "0.0.1",
   "persons": [
     {
-      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "id": "a1b2c3d4-e5f6-4789-abcd-ef1234567890",
       "name": { "first-name": "John", "last-name": "Smith" },
       "sex": "male",
       "birth": {
@@ -1482,15 +1490,15 @@ MINIMAL VALID EXAMPLE
       }
     },
     {
-      "id": "e5f6g7h8-i9j0-1234-klmn-op5678901234",
+      "id": "b7c8d9e0-f1a2-4b3c-8d4e-5f6a7b8c9d0e",
       "name": { "first-name": "Jane", "last-name": "Smith", "maiden-name": "Doe" },
       "sex": "female"
     }
   ],
   "relations": [
     {
-      "id": "r1s2t3u4-v5w6-7890-xyza-bc1234567890",
-      "partners": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890", "e5f6g7h8-i9j0-1234-klmn-op5678901234"],
+      "id": "c3d4e5f6-a7b8-4c9d-9e0f-1a2b3c4d5e6f",
+      "partners": ["a1b2c3d4-e5f6-4789-abcd-ef1234567890", "b7c8d9e0-f1a2-4b3c-8d4e-5f6a7b8c9d0e"],
       "children": [],
       "begin": { "date": { "day": 20, "month": 8, "year": 2010, "fuzzy": false } }
     }
