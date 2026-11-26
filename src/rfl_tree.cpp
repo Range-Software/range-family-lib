@@ -789,34 +789,44 @@ QMap<QUuid,FPerson> FTree::storePictureUrls(const QString &treeFileName) const
             continue;
         }
 
-        picture.setUrl(relativePath);
-
         QString filePath = QDir(destDir).absoluteFilePath(relativePath);
         QString filePathDir = QFileInfo(filePath).absolutePath();
 
+        // Picture file can not be written (e.g. a sandboxed application has access
+        // to the tree file selected by the user only, not to the directory it is in).
+        // Url would point to a missing file - embed the data instead.
         if (!QDir().mkpath(filePathDir))
         {
-            RLogger::warning("Failed to create picture directory \"%s\".\n",filePathDir.toUtf8().constData());
+            RLogger::warning("Failed to create picture directory \"%s\". Picture data will be embedded.\n",filePathDir.toUtf8().constData());
+            picture.setUrl(QString());
+            it.value().setPicture(picture);
+            continue;
+        }
+        if (!FPicture::writeLocalFileData(filePath,picture.getData()))
+        {
+            RLogger::warning("Failed to write picture file \"%s\". Picture data will be embedded.\n",filePath.toUtf8().constData());
+            picture.setUrl(QString());
+            it.value().setPicture(picture);
+            continue;
         }
 
-        if (FPicture::writeLocalFileData(filePath,picture.getData()))
-        {
-            // Data stored in the referenced file are not embedded.
-            picture.setData(QByteArray());
+        picture.setUrl(relativePath);
 
-            // The picture has moved - the file it was stored in before is removed.
-            if (QFileInfo(filePath) != QFileInfo(previousFilePath) && QFile::exists(previousFilePath))
+        // Data stored in the referenced file are not embedded.
+        picture.setData(QByteArray());
+
+        // The picture has moved - the file it was stored in before is removed.
+        if (QFileInfo(filePath) != QFileInfo(previousFilePath) && QFile::exists(previousFilePath))
+        {
+            if (QFile::remove(previousFilePath))
             {
-                if (QFile::remove(previousFilePath))
-                {
-                    RLogger::info("Picture file \"%s\" was moved to \"%s\".\n",
-                                  previousFilePath.toUtf8().constData(),
-                                  filePath.toUtf8().constData());
-                }
-                else
-                {
-                    RLogger::warning("Failed to remove picture file \"%s\".\n",previousFilePath.toUtf8().constData());
-                }
+                RLogger::info("Picture file \"%s\" was moved to \"%s\".\n",
+                              previousFilePath.toUtf8().constData(),
+                              filePath.toUtf8().constData());
+            }
+            else
+            {
+                RLogger::warning("Failed to remove picture file \"%s\".\n",previousFilePath.toUtf8().constData());
             }
         }
 
@@ -956,6 +966,9 @@ void FTree::writeXmlFile(const QString &fileName) const
     }
 
     QSaveFile file(fileName);
+    // A sandboxed application may write a file the user selected, but not create
+    // the temporary file next to it which an atomic save is renamed from.
+    file.setDirectWriteFallback(true);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         throw RError(RError::Type::OpenFile,R_ERROR_REF,"Failed to open the file \"%s\".",fileName.toUtf8().constData());
@@ -1017,6 +1030,9 @@ void FTree::writeJsonFile(const QString &fileName) const
     }
 
     QSaveFile file(fileName);
+    // A sandboxed application may write a file the user selected, but not create
+    // the temporary file next to it which an atomic save is renamed from.
+    file.setDirectWriteFallback(true);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         throw RError(RError::Type::OpenFile,R_ERROR_REF,"Failed to open the file \"%s\".",fileName.toUtf8().constData());
@@ -1207,6 +1223,9 @@ void FTree::writeDotFile(const QString &fileName) const
     }
 
     QSaveFile file(fileName);
+    // A sandboxed application may write a file the user selected, but not create
+    // the temporary file next to it which an atomic save is renamed from.
+    file.setDirectWriteFallback(true);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         throw RError(RError::Type::OpenFile,R_ERROR_REF,"Failed to open the file \"%s\".",fileName.toUtf8().constData());

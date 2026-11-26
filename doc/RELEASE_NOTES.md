@@ -46,6 +46,12 @@
   synchronization (Cloud, iCloud and similar) transfer all of them again.
   `FPicture::writeLocalFileData()` now leaves a file alone when its content is
   the same.
+- `FTree::writeFile()` kept a picture url pointing to a missing file when the
+  picture directory or file next to the tree file could not be written (e.g. by
+  a sandboxed application, which has access to the selected tree file only).
+  The picture data are embedded in the tree file instead.
+- `FTree::writeFile()` failed when no temporary file could be created next to
+  the tree file. The file is written directly in that case.
 
 ---
 
